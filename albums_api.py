@@ -41,8 +41,6 @@ header = {'Authorization': f'Bearer {auth_token}',
           'Content-Type': 'application/json'}
 
 
-# @app.get("/artist") #?q={artist_name}")
-# # @app.get("/artist?q={artist_name}")
 def get_artist(q):
 
     """ 
@@ -91,7 +89,9 @@ def get_artist_albums(artist, avoid_duplicates=False):
 
 @app.get('/api/v1/albums')
 def get_albums(q):
-    
+    """
+    Gets a list of all albums from artist 'q' from Spotify API. 
+    """
     artist_id = get_artist(q)
     
     artist_albums = get_artist_albums(artist_id, avoid_duplicates=True)
