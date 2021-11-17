@@ -26,4 +26,3 @@ def get_auth_token(url, client_id, client_secret):
     
     return auth_token
 
-get_auth_token(AUTH_URL, CLIENT_ID, CLIENT_SECRET)   

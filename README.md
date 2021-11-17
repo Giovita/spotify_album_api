@@ -29,3 +29,11 @@ While on root directory, run `uvicorn api.fast:app --reload` from CLI to instant
 
 - endpoint = http://localhost/api/v1/albums?q=<band-name>  # Endpoint for API
 - params = {'q' = band_name}
+
+
+# Extra Comments
+
+## Album Filter
+
+Returns only albums tagged as "album" by spotify, so no 'singles' or 'compilations' will be returned. 
+Can be changed by adjusting parameter `include_groups` in endpoint #'/artist-albums'#

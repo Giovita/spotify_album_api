@@ -43,38 +43,58 @@ def index():
 
 
 @app.get("/artist") #?q={artist_name}")
-def get_artist(artist_name: Optional[str] = None):
+# @app.get("/artist?q={artist_name}")
+def get_artist(q):
 
     """ 
-    Use '/search' api endpoint to find 'artist_id' for a given name. https://developer.spotify.com/documentation/general/guides/authorization/client-credentials/
+    Use '/search' api endpoint to find 'artist_id' for a given name. 
+    https://developer.spotify.com/documentation/general/guides/authorization/client-credentials/
     Pick first item returned as default. 
     """
-    type = 'artist'
+    # type = 'artist'
     header = {'Authorization': f'Bearer {auth_token}', 
               'Content-Type': 'application/json'}
 
-    # header = {'Authorization': f'Bearer {auth_token}'}
+    artist_url = urljoin(URI, f'search?q={q}&type=artist')
 
-    # url = urljoin(URI, 'search',  f'?q={artist_name}&type=type')
-
-    url = urljoin(URI, 'search?q=beatles&type=artist')
-
-    print(url)
+    print(artist_url)
     
-    resp = requests.get(url, headers=header).json()
-    
-    # print(resp)
+    resp = requests.get(artist_url, headers=header).json()
     
     artist_id = resp['artists']['items'][0]['id']
     artist_name = resp['artists']['items'][0]['name']
         
-    return artist_name, artist_id 
-    # return artist_id
-    # resp = requests.post(url, data = {q=})
+    # return artist_name, artist_id 
+    
+@app.get('/artist-albums')
+def get_artist_albums():
+    """
+    From artist ID, return a list of every album of the artist from Spotify's API
+    https://developer.spotify.com/documentation/web-api/reference/#/operations/get-an-artists-albums
+    """
+    
+    artist = "3WrFJ7ztbogyGnTHbHJFl2"
+    url = urljoin(URI, f'artists/{artist}/albums?include_groups=album&offset=10')  # Filters 
+    header = {'Authorization': f'Bearer {auth_token}', 
+              'Content-Type': 'application/json'}
 
-    # print(artist_name)
+    resp = requests.get(url, headers=header).json()
 
+    albums = []
+    for album in resp.get('items'):
+        albums.append(album['name'])
 
+    # return albums
+    if resp.get('items'):
+        is_empty = False
+    elif not resp.get('items'):
+        is_empty = True
+    
+    return is_empty 
+    
+    # artist_url = urljoin(URI, f'search?q={q}&type=artist')
+    
+    pass
 
 # Test endpoint for auth workflow
 @app.get("/tracks_testAPI")
