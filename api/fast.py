@@ -18,7 +18,7 @@ CLIENT_ID = os.getenv('SPOTIFY_API_CLIENT_ID')
 CLIENT_SECRET = os.getenv('SPOTIFY_API_CLIENT_SECRET')
 
 
-# Create app
+# Setup Client
 app = FastAPI()
 
 app.add_middleware(
@@ -43,10 +43,13 @@ auth_header = {'Authorization': f'Basic {auth_str}',
                'Content-Type': 'application/x-www-form-urlencoded'}
 auth_body = {'grant_type': 'client_credentials'}
 
-auth_resp = requests.post(AUTH_URL,headers=auth_header, data=auth_body)
+auth_resp = requests.post(AUTH_URL,headers=auth_header, data=auth_body).json()
 
-pprint(auth_resp.json())
+pprint(auth_resp)
 
+token = auth_resp.get('access_token', auth_resp.get('error'))
+
+# print(token)
 
 
 @app.get("/")
@@ -55,6 +58,12 @@ def index():
 
 # Get band_id spotify API
 
+@app.get("/tracks_testAPI")
+def get_tracks():
+    url = 'https://api.spotify.com/v1/tracks/2TpxZ7JUBn3uw46aR7qd6V'
+    header = {'Authorization': f'Bearer {token}'}
+    r = requests.get(url, headers=header)
+    return r.json()
 
 @app.get("/artist")
 def get_artist(artist_name):
