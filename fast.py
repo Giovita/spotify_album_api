@@ -10,6 +10,8 @@ from requests.api import head
 
 from api.auth import get_auth_token
 
+# from auth import get_auth_token
+
 from pprint import pprint
 
 URI = 'https://api.spotify.com/v1/'
@@ -35,11 +37,8 @@ app.add_middleware(
     allow_headers = ["*"],  # Allow all headers
 )
 
-@app.get("/")
-def index():
-    return {"Ok": True}
-
-# Get band_id spotify API
+header = {'Authorization': f'Bearer {auth_token}', 
+          'Content-Type': 'application/json'}
 
 
 @app.get("/artist") #?q={artist_name}")
@@ -51,9 +50,6 @@ def get_artist(q):
     https://developer.spotify.com/documentation/general/guides/authorization/client-credentials/
     Pick first item returned as default. 
     """
-    # type = 'artist'
-    header = {'Authorization': f'Bearer {auth_token}', 
-              'Content-Type': 'application/json'}
 
     artist_url = urljoin(URI, f'search?q={q}&type=artist')
 
@@ -67,58 +63,72 @@ def get_artist(q):
     return artist_name, artist_id 
     
 @app.get('/artist-albums')
-def get_artist_albums(artist):
+def get_artist_albums(artist, avoid_duplicates=False):
     """
     From artist ID, return a list of every album of the artist from Spotify's API
     https://developer.spotify.com/documentation/web-api/reference/#/operations/get-an-artists-albums
     """
-    
-    # artist = "3WrFJ7ztbogyGnTHbHJFl2"  # The Beatles
-    # artist = "0k17h0D3J5VfsdmQ1iZtE9"  # Pink Floyd
-    header = {'Authorization': f'Bearer {auth_token}', 
-              'Content-Type': 'application/json'}
-    # url = urljoin(URI, f'artists/{artist}/albums?include_groups=album&offset=10')  # Filters only "album" types
-
-    # resp = requests.get(url, headers=header).json()
-
-    # albums = []
-    # for album in resp.get('items'):
-    #     albums.append(album['name'])
-
-    # # return albums
-    # if resp.get('items'):
-    #     is_empty = False
-    # elif not resp.get('items'):
-    #     is_empty = True
         
-    page = 0
-    albums = []
     url = urljoin(URI, f'artists/{artist}/albums?include_groups=album&limit=49&offset=0')  # Filters only "album" types
-
     resp = requests.get(url, headers=header).json()
+
+    avoid_duplicates = True  # Uncomment to prevent duplicates in output. 
+
+    albums = []
+    page = 0
     while resp.get('items'):
         url = urljoin(URI, f'artists/{artist}/albums?include_groups=album&limit=49&offset={page}')   
-        # url = urljoin(URI, f'artists/{artist}/albums?&limit=49&offset={page}')   
         resp = requests.get(url, headers=header).json()
+        
         for album in resp.get('items'):
-            albums.append(album['name'])
-
+            name = album['name']
+            if not avoid_duplicates or not name in albums:
+                albums.append(name)
+            
         page += 50
     
-    # url = urljoin(URI, f'artists/{artist}/albums?limit=10')  # Filters only "album" types
-    # resp = requests.get(url, headers=header).json()
-    # for album in resp.get('items'):
-    #     albums.append(album['name'])
-    
-    
-    print(len(albums))
-    
-    next = resp['next']
     return albums
     
-    # artist_url = urljoin(URI, f'search?q={q}&type=artist')
+def get_artist_albums(artist, avoid_duplicates=False):
+    """
+    From artist ID, return a list of every album of the artist from Spotify's API
+    https://developer.spotify.com/documentation/web-api/reference/#/operations/get-an-artists-albums
+    """
+        
+    url = urljoin(URI, f'artists/{artist}/albums?include_groups=album&limit=49&offset=0')  # Filters only "album" types
+    resp = requests.get(url, headers=header).json()
+
+    avoid_duplicates = True  # Uncomment to prevent duplicates in output. 
+
+    albums = []
+    page = 0
+    while resp.get('items'):
+        url = urljoin(URI, f'artists/{artist}/albums?include_groups=album&limit=49&offset={page}')   
+        resp = requests.get(url, headers=header).json()
+        
+        for album in resp.get('items'):
+            name = album['name']
+            if not avoid_duplicates or not name in albums:
+                albums.append(name)
+            
+        page += 50
     
+    return albums
+
+print(get_artist_albums('0k17h0D3J5VfsdmQ1iZtE9'))
+
+# http://localhost:8000/api/v1/albums?q=<band-name>  # Endpoint for API
+
+@app.get('/api/v1/albums')
+def get_albums(q):
     pass
+    
+
+
+#############################
+@app.get("/")
+def index():
+    return {"Ok": True}
 
 # Test endpoint for auth workflow
 @app.get("/tracks_testAPI")

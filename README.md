@@ -27,7 +27,7 @@ While on root directory, run `uvicorn api.fast:app --reload` from CLI to instant
 
 # Target url
 
-- endpoint = http://localhost/api/v1/albums?q=<band-name>  # Endpoint for API
+- endpoint = http://localhost:8000/api/v1/albums?q=<band-name>  # Endpoint for API
 - params = {'q' = band_name}
 
 
@@ -37,3 +37,14 @@ While on root directory, run `uvicorn api.fast:app --reload` from CLI to instant
 
 Returns only albums tagged as "album" by spotify, so no 'singles' or 'compilations' will be returned. 
 Can be changed by adjusting parameter `include_groups` in endpoint #'/artist-albums'#
+
+## Duplicates
+
+Does not filter duplicates, assuming that every item that spotify stores is unique. 
+If duplicates are to be avoided, set `avoid_duplicates` in `get_artist_albums`
+
+## endpoint
+
+- endpoint = http://localhost:8000/api/v1/albums?q=<band-name>  # Endpoint for API
+
+Must explicitly set port 8000
