@@ -32,7 +32,7 @@ app.add_middleware(
 header = {'Authorization': f'Bearer {auth_token}', 
           'Content-Type': 'application/json'}
 
-# @app.get('/artists', status_code=200)
+@app.get('/artists', status_code=200)
 def get_artist(q, response:Response):
 
     """ 
@@ -54,7 +54,7 @@ def get_artist(q, response:Response):
     artist_id = artists_found[0]['id']
     return artist_id
     
-    
+@app.get('/albums', status_code=200)
 def get_artist_albums(artist, response: Response, avoid_duplicates=False):
     """
     From artist ID, return a list of every album of the artist from Spotify's API

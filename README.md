@@ -3,14 +3,14 @@ Python version: >Python 3.8.12
 Make sure to have `pip` installed in local enviroment.   
 It is recomended to create a new `virtual environment`.
 
-Run `pip install -r requirements.txt` to install dependencies. 
+Run `pip install -r requirements.txt` to install dependencies, namely fastapi, uvicorn and python-dotenv. 
 
 # Authenticate App
 
 ## Generate Client ID and Client Secret
 
 1. Register your app following [Spotify for developers guidelines](https://developer.spotify.com/documentation/general/guides/authorization/app-settings/).
-2. Copy '.env-sample' to '.env'
+2. Copy/rename '.env-sample' to '.env'
 3. Copy the generated 'Cliend ID' and 'Client Secret' in Spotify's dashboard to `SPOTIFY_API_CLIENT_ID` and `SPOTIFY_API_CLIENT_SECRET` in .env. 
 4. `SPOTIFY_API_CLIENT_ID` and `SPOTIFY_API_CLIENT_SECRET` will be imported by app and sent as authentication credentials for API calls. 
 
@@ -22,7 +22,7 @@ Run `pip install -r requirements.txt` to install dependencies.
 # Run App
 
 While on root directory, run `uvicorn albums_api:app --reload` from CLI to instantiate the server.  
-2. Run "http://localhost:8000/api/v1/albums?q=<band-name/>" in web browser, replace `<band-name>` with desired band to search for
+2. Go to `http://localhost:8000/api/v1/albums?q=<band-name/>` in web browser, replace `<band-name>` with desired band to search for
 
 
 # Target url
@@ -36,7 +36,7 @@ While on root directory, run `uvicorn albums_api:app --reload` from CLI to insta
 ## Album Filter
 
 Returns only albums tagged as "album" by spotify, so no 'singles' or 'compilations' will be returned. 
-Can be changed by adjusting parameter `include_groups` in endpoint #'/artist-albums'#
+Can be changed by adjusting parameter `include_groups` in `get_artist_albums`
 
 ## Duplicates
 

@@ -9,6 +9,5 @@ setup(name='SPOTIFY_ALBUM_API',
       version="1.0",
       description="List every album for a given artist in spotify by calling its public API",
       packages=find_packages(),
-      # include_package_data: to install data from MANIFEST.in
       include_package_data=True,
       install_requires=requirements)
