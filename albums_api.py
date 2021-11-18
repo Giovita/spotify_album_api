@@ -5,7 +5,6 @@ from urllib.parse import urljoin
 from dotenv import load_dotenv
 from fastapi import FastAPI, Response, status
 from fastapi.middleware.cors import CORSMiddleware
-from requests.api import head
 
 from utils.auth import get_auth_token
 
@@ -53,6 +52,7 @@ def get_artist(q, response:Response):
     artist_id = artists_found[0]['id']
     return artist_id
     
+    
 def get_artist_albums(artist, response: Response, avoid_duplicates=False):
     """
     From artist ID, return a list of every album of the artist from Spotify's API
@@ -85,6 +85,7 @@ def get_artist_albums(artist, response: Response, avoid_duplicates=False):
         if url:
             resp = requests.get(url, headers=header).json()
     return albums
+
 
 @app.get('/api/v1/albums', status_code=200)
 def get_albums(q, response:Response):
