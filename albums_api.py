@@ -67,30 +67,27 @@ def get_artist_albums(artist, response: Response, avoid_duplicates=False):
     resp = requests.get(url, headers=header).json()
 
     # avoid_duplicates = True  # Uncomment to prevent duplicates in output. 
-
+        
     albums = []
     albums_name = []
     page = 0
-    while resp.get('items'):
-        url = urljoin(spotify_api_base_URI, f'artists/{artist}/albums?include_groups=album&limit=49&offset={page}')   
-        resp = requests.get(url, headers=header).json()
-        
+    
+    while url:
         for album in resp.get('items'):
             album_dict = {'name': album['name'],
-                          'released': album['release_date'],
-                          'tracks': album['total_tracks'],
-                          'cover': {'height': album.get('images', 'No Cover Image')[0]['height'],
-                                    'width': album.get('images', 'No Cover Image')[0]['width'],
-                                    'url': album.get('images', 'No Cover Image')[0]['url'],
-                                    } 
-                              }
-            
+                    'released': album['release_date'],
+                    'tracks': album['total_tracks'],
+                    'cover': {'height': album.get('images', 'No Cover Image')[0]['height'],
+                            'width': album.get('images', 'No Cover Image')[0]['width'],
+                            'url': album.get('images', 'No Cover Image')[0]['url'],
+                            } 
+                        }
+    
             if not avoid_duplicates or not album_dict['name'] in albums:
                 albums_name.append(album_dict['name'])
                 albums.append(album_dict)
-            
-        page += 50
-    
+        url = resp.get('next')
+        
     return albums
 
 @app.get('/api/v1/albums', status_code=200)
