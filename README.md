@@ -21,8 +21,8 @@ Run `pip install -r requirements.txt` to install dependencies.
 
 # Run App
 
-While on root directory, run `uvicorn albums_api:app --reload` from CLI to instantiate the server.
-2. Go to 
+While on root directory, run `uvicorn albums_api:app --reload` from CLI to instantiate the server.  
+2. Run "http://localhost:8000/api/v1/albums?q=<band-name/>" in web browser, replace `<band-name>` with desired band to search for
 
 
 # Target url
