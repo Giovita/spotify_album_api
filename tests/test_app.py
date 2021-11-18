@@ -62,5 +62,5 @@ def test_get_albums():
     assert not response.json() == False
     assert set(response.json()[0].keys()) == {'name', 'released', 'tracks', 'cover'}
 
-def test_duplicates():
+# def test_duplicates():
     

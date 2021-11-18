@@ -9,8 +9,9 @@ from requests.api import head
 
 from utils.auth import get_auth_token
 
-URI = 'https://api.spotify.com/v1/'
+spotify_api_base_URI = 'https://api.spotify.com/v1/'
 
+# Load app auth credentials from .env.
 load_dotenv()
 AUTH_URL = 'https://accounts.spotify.com/api/token'
 CLIENT_ID = os.getenv('SPOTIFY_API_CLIENT_ID')
@@ -41,7 +42,7 @@ def get_artist(q, response:Response):
     Pick first item returned as default. 
     """
 
-    artist_url = urljoin(URI, f'search?q={q}&type=artist')
+    artist_url = urljoin(spotify_api_base_URI, f'search?q={q}&type=artist')
 
     resp = requests.get(artist_url, headers=header).json()
     
@@ -61,7 +62,8 @@ def get_artist_albums(artist, response: Response, avoid_duplicates=False):
     https://developer.spotify.com/documentation/web-api/reference/#/operations/get-an-artists-albums
     """
         
-    url = urljoin(URI, f'artists/{artist}/albums?include_groups=album&limit=49&offset=0')  # Filters only "album" types
+    url = urljoin(spotify_api_base_URI, 
+                  f'artists/{artist}/albums?include_groups=album&limit=49&offset=0')  # Filters only "album" types
     resp = requests.get(url, headers=header).json()
 
     # avoid_duplicates = True  # Uncomment to prevent duplicates in output. 
@@ -70,7 +72,7 @@ def get_artist_albums(artist, response: Response, avoid_duplicates=False):
     albums_name = []
     page = 0
     while resp.get('items'):
-        url = urljoin(URI, f'artists/{artist}/albums?include_groups=album&limit=49&offset={page}')   
+        url = urljoin(spotify_api_base_URI, f'artists/{artist}/albums?include_groups=album&limit=49&offset={page}')   
         resp = requests.get(url, headers=header).json()
         
         for album in resp.get('items'):
