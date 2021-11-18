@@ -1,18 +1,13 @@
-from typing import Optional
 import requests
 import os
 from urllib.parse import urljoin
 
 from dotenv import load_dotenv
-from fastapi import FastAPI
+from fastapi import FastAPI, Response, status
 from fastapi.middleware.cors import CORSMiddleware
 from requests.api import head
 
-from api.auth import get_auth_token
-
-# from auth import get_auth_token
-
-from pprint import pprint
+from utils.auth import get_auth_token
 
 URI = 'https://api.spotify.com/v1/'
 
@@ -33,15 +28,15 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins = ["*"],  # Allows all origins
     allow_credentials = True,
-    allow_methods = ["*"],  # Allow al lmethods
+    allow_methods = ["*"],  # Allow all methods
     allow_headers = ["*"],  # Allow all headers
 )
 
 header = {'Authorization': f'Bearer {auth_token}', 
           'Content-Type': 'application/json'}
 
-
-def get_artist(q):
+# @app.get('/artists', status_code=200)
+def get_artist(q, response:Response):
 
     """ 
     Use '/search' api endpoint to find 'artist_id' for a given name. 
@@ -53,22 +48,21 @@ def get_artist(q):
 
     resp = requests.get(artist_url, headers=header).json()
     
-    artist_id = resp['artists']['items'][0]['id']
-    artist_name = resp['artists']['items'][0]['name']
-        
-<<<<<<< HEAD:albums_api.py
-    # return artist_name, artist_id 
-    return artist_id
-=======
-    return artist_name, artist_id 
->>>>>>> 983aabc748cd6f42c8f0162be2791b4e112ef537:api/fast.py
+    artists_found = resp.get('artists', )['items']
     
-def get_artist_albums(artist, avoid_duplicates=False):
+    if not artists_found:
+        response.status_code = status.HTTP_404_NOT_FOUND
+        return "404 - No such artist"
+    
+    artist_id = artists_found[0]['id']
+    return artist_id
+    
+    
+def get_artist_albums(artist, response: Response, avoid_duplicates=False):
     """
     From artist ID, return a list of every album of the artist from Spotify's API
     https://developer.spotify.com/documentation/web-api/reference/#/operations/get-an-artists-albums
     """
-<<<<<<< HEAD:albums_api.py
         
     url = urljoin(URI, f'artists/{artist}/albums?include_groups=album&limit=49&offset=0')  # Filters only "album" types
     resp = requests.get(url, headers=header).json()
@@ -76,74 +70,40 @@ def get_artist_albums(artist, avoid_duplicates=False):
     # avoid_duplicates = True  # Uncomment to prevent duplicates in output. 
 
     albums = []
+    albums_name = []
     page = 0
     while resp.get('items'):
         url = urljoin(URI, f'artists/{artist}/albums?include_groups=album&limit=49&offset={page}')   
         resp = requests.get(url, headers=header).json()
         
         for album in resp.get('items'):
-            name = album['name']
-            if not avoid_duplicates or not name in albums:
-                albums.append(name)
+            album_dict = {'name': album['name'],
+                          'released': album['release_date'],
+                          'tracks': album['total_tracks'],
+                          'cover': {'height': album.get('images', 'No Cover Image')[0]['height'],
+                                    'width': album.get('images', 'No Cover Image')[0]['width'],
+                                    'url': album.get('images', 'No Cover Image')[0]['url'],
+                                    } 
+                              }
+            
+            if not avoid_duplicates or not album_dict['name'] in albums:
+                albums_name.append(album_dict['name'])
+                albums.append(album_dict)
             
         page += 50
     
     return albums
 
-# http://localhost:8000/api/v1/albums?q=<band-name>  # Endpoint for API
-
-@app.get('/api/v1/albums')
-def get_albums(q):
+@app.get('/api/v1/albums', status_code=200)
+def get_albums(q, response:Response):
     """
     Gets a list of all albums from artist 'q' from Spotify API. 
     """
-    artist_id = get_artist(q)
-=======
+    artist_id = get_artist(q, response)
     
-    # artist = "3WrFJ7ztbogyGnTHbHJFl2"  # The Beatles
-    artist = "0k17h0D3J5VfsdmQ1iZtE9"  # Pink Floyd
-    header = {'Authorization': f'Bearer {auth_token}', 
-              'Content-Type': 'application/json'}
-    # url = urljoin(URI, f'artists/{artist}/albums?include_groups=album&offset=10')  # Filters only "album" types
-
-    # resp = requests.get(url, headers=header).json()
-
-    # albums = []
-    # for album in resp.get('items'):
-    #     albums.append(album['name'])
-
-    # # return albums
-    # if resp.get('items'):
-    #     is_empty = False
-    # elif not resp.get('items'):
-    #     is_empty = True
-        
-    page = 0
-    albums = []
-    url = urljoin(URI, f'artists/{artist}/albums?include_groups=album&limit=49&offset=0')  # Filters only "album" types
-
-    resp = requests.get(url, headers=header).json()
-    while resp.get('items'):
-        url = urljoin(URI, f'artists/{artist}/albums?include_groups=album&limit=49&offset={page}')   
-        # url = urljoin(URI, f'artists/{artist}/albums?&limit=49&offset={page}')   
-        resp = requests.get(url, headers=header).json()
-        for album in resp.get('items'):
-            albums.append(album['name'])
-
-        page += 50
+    if response.status_code == 404:
+        return artist_id
     
-    # url = urljoin(URI, f'artists/{artist}/albums?limit=10')  # Filters only "album" types
-    # resp = requests.get(url, headers=header).json()
-    # for album in resp.get('items'):
-    #     albums.append(album['name'])
-    
-    
-    print(len(albums))
-    
-    next = resp['next']
-    return albums
->>>>>>> 983aabc748cd6f42c8f0162be2791b4e112ef537:api/fast.py
-    
-    artist_albums = get_artist_albums(artist_id, avoid_duplicates=True)
+    artist_albums = get_artist_albums(artist_id, response, avoid_duplicates=True)
     
     return artist_albums

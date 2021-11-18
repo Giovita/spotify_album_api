@@ -21,7 +21,7 @@ Run `pip install -r requirements.txt` to install dependencies.
 
 # Run App
 
-While on root directory, run `uvicorn api.fast:app --reload` from CLI to instantiate the server.
+While on root directory, run `uvicorn albums_api:app --reload` from CLI to instantiate the server.
 2. Go to 
 
 
@@ -47,4 +47,11 @@ If duplicates are to be avoided, set `avoid_duplicates` in `get_artist_albums`
 
 - endpoint = http://localhost:8000/api/v1/albums?q=<band-name>  # Endpoint for API
 
-Must explicitly set port 8000
+Must explicitly set port 8000 when running app 
+
+
+# Response Status
+
+If no matching artist is found, it will return **404 - No such artist**
+If Spotify API is not available, it will return **500 - Internal Server Error**
+If Authentication Token expires, it will return **500 - Internal Server**
