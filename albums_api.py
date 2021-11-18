@@ -17,7 +17,7 @@ AUTH_URL = 'https://accounts.spotify.com/api/token'
 CLIENT_ID = os.getenv('SPOTIFY_API_CLIENT_ID')
 CLIENT_SECRET = os.getenv('SPOTIFY_API_CLIENT_SECRET')
 
-auth_response, auth_token = get_auth_token(AUTH_URL, CLIENT_ID, CLIENT_SECRET)   
+auth_response, auth_token = get_auth_token(AUTH_URL, CLIENT_ID, CLIENT_SECRET) 
 
 # Setup Client
 app = FastAPI()
@@ -33,13 +33,11 @@ app.add_middleware(
 header = {'Authorization': f'Bearer {auth_token}', 
           'Content-Type': 'application/json'}
 
-@app.get('/artists', status_code=200)
 def get_artist(q, response:Response):
 
     """ 
     Use '/search' api endpoint to find 'artist_id' for a given name. 
-    https://developer.spotify.com/documentation/general/guides/authorization/client-credentials/
-    Pick first item returned as default. 
+    https://developer.spotify.com/documentation/web-api/reference/#/operations/search    Pick first item returned as default. 
     """
 
     artist_url = urljoin(spotify_api_base_URI, f'search?q={q}&type=artist')
@@ -55,7 +53,6 @@ def get_artist(q, response:Response):
     artist_id = artists_found[0]['id']
     return artist_id
     
-@app.get('/albums', status_code=200)
 def get_artist_albums(artist, response: Response, avoid_duplicates=False):
     """
     From artist ID, return a list of every album of the artist from Spotify's API
@@ -63,31 +60,33 @@ def get_artist_albums(artist, response: Response, avoid_duplicates=False):
     """
         
     url = urljoin(spotify_api_base_URI, 
-                  f'artists/{artist}/albums?include_groups=album&limit=49&offset=0')  # Filters only "album" types
+                  f'artists/{artist}/albums?include_groups=album&limit=20&offset=0')  # Filters only "album" types
     resp = requests.get(url, headers=header).json()
 
-    # avoid_duplicates = True  # Uncomment to prevent duplicates in output. 
+    avoid_duplicates = False  # Pass False to avoid_duplicates to prevent repetition
         
     albums = []
     albums_name = []
     page = 0
     
-    while url:
+    # while url:
+    for page in range(2):
         for album in resp.get('items'):
             album_dict = {'name': album['name'],
-                    'released': album['release_date'],
-                    'tracks': album['total_tracks'],
-                    'cover': {'height': album.get('images', 'No Cover Image')[0]['height'],
-                            'width': album.get('images', 'No Cover Image')[0]['width'],
-                            'url': album.get('images', 'No Cover Image')[0]['url'],
-                            } 
-                        }
-    
+                            'released': album['release_date'],
+                            'tracks': album['total_tracks'],
+                            'cover': {'height': album.get('images', 'No Cover Image')[0]['height'],
+                                    'width': album.get('images', 'No Cover Image')[0]['width'],
+                                    'url': album.get('images', 'No Cover Image')[0]['url'],
+                                    } 
+                                }
+
             if not avoid_duplicates or not album_dict['name'] in albums:
                 albums_name.append(album_dict['name'])
                 albums.append(album_dict)
         url = resp.get('next')
         
+    print(len(albums))
     return albums
 
 @app.get('/api/v1/albums', status_code=200)

@@ -1,15 +1,5 @@
 import requests
-import os
-from dotenv import load_dotenv
 import base64
-
-# Load app auth credentials from .env.
-load_dotenv()
-
-CLIENT_ID = os.getenv('SPOTIFY_API_CLIENT_ID')
-CLIENT_SECRET = os.getenv('SPOTIFY_API_CLIENT_SECRET')
-
-AUTH_URL = 'https://accounts.spotify.com/api/token'
 
 def get_auth_token(url, client_id, client_secret):
     """

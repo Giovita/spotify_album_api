@@ -1,4 +1,13 @@
-from utils.auth import get_auth_token, CLIENT_ID, CLIENT_SECRET, AUTH_URL
+from utils.auth import get_auth_token
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+AUTH_URL = 'https://accounts.spotify.com/api/token'
+CLIENT_ID = os.getenv('SPOTIFY_API_CLIENT_ID')
+CLIENT_SECRET = os.getenv('SPOTIFY_API_CLIENT_SECRET')
+
+auth_response, auth_token = get_auth_token(AUTH_URL, CLIENT_ID, CLIENT_SECRET) 
 
 
 def test_auth_ok():
