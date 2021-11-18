@@ -22,7 +22,6 @@ def get_auth_token(url, client_id, client_secret):
     auth_resp = requests.post(url,headers=auth_header, data=auth_body).json()
 
     auth_token = auth_resp.get('access_token', auth_resp.get('error'))
-    auth_header = {'Authorization': f'Bearer {auth_token}'}
     
     return auth_token
 
