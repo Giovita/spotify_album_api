@@ -1,7 +1,0 @@
-name: Unittest on push
-on: [push]
-jobs:
-  Explore-GitHub-Actions:
-    runs-on: ubuntu-latest
-    steps:
-      - run: pytest
