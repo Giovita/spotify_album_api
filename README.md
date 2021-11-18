@@ -3,7 +3,10 @@ Python version: >Python 3.8.12
 Make sure to have `pip` installed in local enviroment.   
 It is recomended to create a new `virtual environment`.
 
-Run `pip install -r requirements.txt` to install dependencies, namely fastapi, uvicorn and python-dotenv. 
+Uses **uvicorn** as to serve API, and fastAPI to create custom API.
+
+1. Clone repo `git clone git@github.com:Giovita/spotify_album_api.git`
+2. Install dependencies `pip install -r requirements.txt`
 
 # Authenticate App
 
@@ -14,7 +17,7 @@ Run `pip install -r requirements.txt` to install dependencies, namely fastapi, u
 3. Copy the generated 'Cliend ID' and 'Client Secret' in Spotify's dashboard to `SPOTIFY_API_CLIENT_ID` and `SPOTIFY_API_CLIENT_SECRET` in .env. 
 4. `SPOTIFY_API_CLIENT_ID` and `SPOTIFY_API_CLIENT_SECRET` will be imported by app and sent as authentication credentials for API calls. 
 
-## Give acces
+## Give user access to Spotify API
 
 1. From the app's dashboard (after registration), go to 'users and access'. 
 2. Give access to desired user for api calls. 

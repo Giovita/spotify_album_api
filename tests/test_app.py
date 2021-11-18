@@ -59,12 +59,12 @@ def test_duplicates():
     response_no_duplicates = client_testUtils.get(url_query_no_duplicates)
 
     assert response_no_duplicates.status_code == 200
-    assert len(response_duplicates.json()) == len(response_no_duplicates.json())
+    assert len(response_duplicates.json()) >= len(response_no_duplicates.json())
     
     albums_duplicate = [album['name'] for album in response_duplicates.json()]
     albums_no_duplicate = [album['name'] for album in response_no_duplicates.json()]
     
-    assert len(set(albums_duplicate)) == len(albums_no_duplicate)
+    assert len(set(albums_no_duplicate)) == len(albums_no_duplicate)
     
     
 # TODO : verify if wrong auth token is passed?

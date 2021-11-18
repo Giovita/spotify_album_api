@@ -13,4 +13,4 @@ def get_artist_albums(artist, response: Response, avoid_duplicates=False):
 
 @app.get('/albums-no-duplicate', status_code=200)
 def get_artist_albums_no_duplicates(artist, response: Response, avoid_duplicates=True):
-    return albums_api.get_artist_albums(artist, response, avoid_duplicates=avoid_duplicates)
+    return albums_api.get_artist_albums(artist, response, avoid_duplicates)

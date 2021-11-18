@@ -60,17 +60,13 @@ def get_artist_albums(artist, response: Response, avoid_duplicates=False):
     """
         
     url = urljoin(spotify_api_base_URI, 
-                  f'artists/{artist}/albums?include_groups=album&limit=20&offset=0')  # Filters only "album" types
+                  f'artists/{artist}/albums?include_groups=album&limit=50&offset=0')  # Filters only "album" types
     resp = requests.get(url, headers=header).json()
 
-    avoid_duplicates = False  # Pass False to avoid_duplicates to prevent repetition
-        
     albums = []
     albums_name = []
-    page = 0
     
-    # while url:
-    for page in range(2):
+    while url:
         for album in resp.get('items'):
             album_dict = {'name': album['name'],
                             'released': album['release_date'],
@@ -81,12 +77,13 @@ def get_artist_albums(artist, response: Response, avoid_duplicates=False):
                                     } 
                                 }
 
-            if not avoid_duplicates or not album_dict['name'] in albums:
+            if not avoid_duplicates or not album_dict['name'] in albums_name:
                 albums_name.append(album_dict['name'])
                 albums.append(album_dict)
+                
         url = resp.get('next')
-        
-    print(len(albums))
+        if url:
+            resp = requests.get(url, headers=header).json()
     return albums
 
 @app.get('/api/v1/albums', status_code=200)
@@ -99,6 +96,6 @@ def get_albums(q, response:Response):
     if response.status_code == 404:
         return artist_id
     
-    artist_albums = get_artist_albums(artist_id, response, avoid_duplicates=True)
-    
+    # Pass False to avoid_duplicates=True to prevent repetition
+    artist_albums = get_artist_albums(artist_id, response, )
     return artist_albums
