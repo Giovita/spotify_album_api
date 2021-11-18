@@ -1,6 +1,6 @@
 # Requirements
-Python version: >Python 3.8.12
-Make sure to have `pip` installed in local enviroment. 
+Python version: >Python 3.8.12  
+Make sure to have `pip` installed in local enviroment.   
 It is recomended to create a new `virtual environment`.
 
 Run `pip install -r requirements.txt` to install dependencies. 
@@ -9,15 +9,15 @@ Run `pip install -r requirements.txt` to install dependencies.
 
 ## Generate Client ID and Client Secret
 
-1. Register your app following according to (Spotify for developers guidelines)[https://developer.spotify.com/documentation/general/guides/authorization/app-settings/.]
+1. Register your app following [Spotify for developers guidelines](https://developer.spotify.com/documentation/general/guides/authorization/app-settings/).
 2. Copy '.env-sample' to '.env'
 3. Copy the generated 'Cliend ID' and 'Client Secret' in Spotify's dashboard to `SPOTIFY_API_CLIENT_ID` and `SPOTIFY_API_CLIENT_SECRET` in .env. 
 4. `SPOTIFY_API_CLIENT_ID` and `SPOTIFY_API_CLIENT_SECRET` will be imported by app and sent as authentication credentials for API calls. 
 
 ## Give acces
 
-1. From the app's dashboard (after registration), got to 'users and access'. 
-2. Add 
+1. From the app's dashboard (after registration), go to 'users and access'. 
+2. Give access to desired user for api calls. 
 
 # Run App
 
@@ -45,7 +45,7 @@ If duplicates are to be avoided, set `avoid_duplicates` in `get_artist_albums`
 
 ## endpoint
 
-- endpoint = http://localhost:8000/api/v1/albums?q=<band-name>  # Endpoint for API
+- endpoint = `http://localhost:8000/api/v1/albums?q=<band-name>`  # Endpoint for API
 
 Must explicitly set port 8000 when running app 
 
