@@ -11,15 +11,12 @@ from utils.auth import get_auth_token
 
 URI = 'https://api.spotify.com/v1/'
 
-# Request authorization through Client Credentials workflow 
-# https://developer.spotify.com/documentation/general/guides/authorization/client-credentials/
-
 load_dotenv()
 AUTH_URL = 'https://accounts.spotify.com/api/token'
 CLIENT_ID = os.getenv('SPOTIFY_API_CLIENT_ID')
 CLIENT_SECRET = os.getenv('SPOTIFY_API_CLIENT_SECRET')
 
-auth_token = get_auth_token(AUTH_URL, CLIENT_ID, CLIENT_SECRET)   
+auth_response, auth_token = get_auth_token(AUTH_URL, CLIENT_ID, CLIENT_SECRET)   
 
 # Setup Client
 app = FastAPI()
