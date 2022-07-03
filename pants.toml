@@ -1,0 +1,5 @@
+[GLOBAL]
+pants_version = "2.12.0"
+
+[python]
+interpreter_constraints = ["CPython==3.8.*"]
